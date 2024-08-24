@@ -141,7 +141,7 @@
                 return;
             }
 
-            nameText = makeUniqueName(nameText);
+            nameText = checkAndMakeUniqueName(nameText);
 
             const now = new Date();
             const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -166,15 +166,20 @@
             messageBoard.scrollTop = messageBoard.scrollHeight;
         }
 
-        function makeUniqueName(name) {
+        function checkAndMakeUniqueName(name) {
             const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            let uniqueName = name;
-            let counter = 1;
+            const existingNames = messages.map(message => message.name);
 
-            while (messages.some(message => message.name === uniqueName)) {
+            if (!existingNames.includes(name)) {
+                return name;
+            }
+
+            let uniqueName;
+            let counter = 1;
+            do {
                 uniqueName = `${name}${counter}`;
                 counter++;
-            }
+            } while (existingNames.includes(uniqueName));
 
             return uniqueName;
         }
