@@ -22,7 +22,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             padding: 10px;
             margin: 10px 0;
             width: calc(100% - 22px);
@@ -48,39 +48,37 @@
     <div class="login-container">
         <h1>Login</h1>
         <input type="text" id="usernameInput" placeholder="Benutzernamen eingeben" maxlength="50">
+        <input type="password" id="passwordInput" placeholder="Passwort eingeben" maxlength="50">
         <button id="loginButton">Login</button>
     </div>
 
     <script>
         document.getElementById('loginButton').addEventListener('click', function() {
             const usernameInput = document.getElementById('usernameInput');
-            let username = usernameInput.value.trim();
+            const passwordInput = document.getElementById('passwordInput');
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
 
-            if (username === '') {
-                alert('Bitte geben Sie einen Benutzernamen ein.');
+            if (username === '' || password === '') {
+                alert('Bitte geben Sie sowohl einen Benutzernamen als auch ein Passwort ein.');
                 return;
             }
 
-            username = makeUniqueUsername(username);
-            localStorage.setItem('username', username);
-            window.location.href = 'nachrichten.html';
-        });
-
-        function makeUniqueUsername(username) {
-            const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
-            let uniqueUsername = username;
-            let counter = 1;
-
-            while (existingUsers.includes(uniqueUsername)) {
-                uniqueUsername = `${username}${counter}`;
-                counter++;
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            if (users[username] && users[username].password !== password) {
+                alert('Falsches Passwort. Bitte versuchen Sie es erneut.');
+                return;
             }
 
-            existingUsers.push(uniqueUsername);
-            localStorage.setItem('users', JSON.stringify(existingUsers));
+            users[username] = {
+                password: password,
+                lastLogin: new Date().toLocaleString('de-DE')
+            };
 
-            return uniqueUsername;
-        }
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('loggedInUser', username);
+            window.location.href = 'nachrichten.html';
+        });
     </script>
 </body>
 </html>
