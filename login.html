@@ -54,30 +54,28 @@
 
     <script>
         document.getElementById('loginButton').addEventListener('click', function() {
-            const usernameInput = document.getElementById('usernameInput');
-            const passwordInput = document.getElementById('passwordInput');
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
+            const usernameInput = document.getElementById('usernameInput').value.trim();
+            const passwordInput = document.getElementById('passwordInput').value.trim();
 
-            if (username === '' || password === '') {
+            if (usernameInput === '' || passwordInput === '') {
                 alert('Bitte geben Sie sowohl einen Benutzernamen als auch ein Passwort ein.');
                 return;
             }
 
             let users = JSON.parse(localStorage.getItem('users')) || {};
-            
-            if (users[username] && users[username].password !== password) {
+
+            if (users[usernameInput] && users[usernameInput].password !== passwordInput) {
                 alert('Falsches Passwort. Bitte versuchen Sie es erneut.');
                 return;
             }
 
-            users[username] = {
-                password: password,
+            users[usernameInput] = {
+                password: passwordInput,
                 lastLogin: new Date().toLocaleString('de-DE')
             };
 
             localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('loggedInUser', username);
+            localStorage.setItem('loggedInUser', usernameInput);
             window.location.href = 'nachrichten.html';
         });
     </script>
