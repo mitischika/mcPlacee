@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: calc(100% - 22px);
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            width: calc(100% - 22px);
+            font-size: 1em;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <input type="text" id="usernameInput" placeholder="Benutzernamen eingeben" maxlength="50">
+        <input type="password" id="passwordInput" placeholder="Passwort eingeben" maxlength="50">
+        <button id="loginButton">Login</button>
+    </div>
+
+    <script>
+        document.getElementById('loginButton').addEventListener('click', function() {
+            const usernameInput = document.getElementById('usernameInput');
+            const passwordInput = document.getElementById('passwordInput');
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (username === '' || password === '') {
+                alert('Bitte geben Sie sowohl einen Benutzernamen als auch ein Passwort ein.');
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            if (users[username] && users[username].password !== password) {
+                alert('Falsches Passwort. Bitte versuchen Sie es erneut.');
+                return;
+            }
+
+            users[username] = {
+                password: password,
+                lastLogin: new Date().toLocaleString('de-DE')
+            };
+
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('loggedInUser', username);
+            window.location.href = 'nachrichten.html';
+        });
+    </script>
+</body>
+</html>
