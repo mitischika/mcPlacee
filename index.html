@@ -67,19 +67,17 @@
         });
 
         function makeUniqueUsername(username) {
-            const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            const existingNames = messages.map(message => message.name);
-
-            if (!existingNames.includes(username)) {
-                return username;
-            }
-
-            let uniqueUsername;
+            const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+            let uniqueUsername = username;
             let counter = 1;
-            do {
+
+            while (existingUsers.includes(uniqueUsername)) {
                 uniqueUsername = `${username}${counter}`;
                 counter++;
-            } while (existingNames.includes(uniqueUsername));
+            }
+
+            existingUsers.push(uniqueUsername);
+            localStorage.setItem('users', JSON.stringify(existingUsers));
 
             return uniqueUsername;
         }
