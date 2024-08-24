@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Startseite</title>
+    <title>Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,28 +15,74 @@
             height: 100vh;
             background-color: #f4f4f4;
         }
-        .container {
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: calc(100% - 22px);
             font-size: 1em;
-            background-color: #007BFF;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            width: calc(100% - 22px);
+            font-size: 1em;
+            background-color: #28a745;
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            box-sizing: border-box;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Willkommen auf der Nachrichten-Seite</h1>
-        <button onclick="window.location.href='login.html'">Anmelden</button>
+    <div class="login-container">
+        <h1>Login</h1>
+        <input type="text" id="usernameInput" placeholder="Benutzernamen eingeben" maxlength="50">
+        <button id="loginButton">Login</button>
     </div>
+
+    <script>
+        document.getElementById('loginButton').addEventListener('click', function() {
+            const usernameInput = document.getElementById('usernameInput');
+            let username = usernameInput.value.trim();
+
+            if (username === '') {
+                alert('Bitte geben Sie einen Benutzernamen ein.');
+                return;
+            }
+
+            username = makeUniqueUsername(username);
+            localStorage.setItem('username', username);
+            window.location.href = 'nachrichten.html';
+        });
+
+        function makeUniqueUsername(username) {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const existingNames = messages.map(message => message.name);
+
+            if (!existingNames.includes(username)) {
+                return username;
+            }
+
+            let uniqueUsername;
+            let counter = 1;
+            do {
+                uniqueUsername = `${username}${counter}`;
+                counter++;
+            } while (existingNames.includes(uniqueUsername));
+
+            return uniqueUsername;
+        }
+    </script>
 </body>
 </html>
