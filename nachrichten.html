@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nachrichten Seite</title>
+    <title>Nachrichten</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -91,6 +91,13 @@
         #clearButton:hover {
             background-color: #c82333;
         }
+        .user-info {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .user-info span {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +105,9 @@
         <h1>Nachrichten Seite</h1>
     </header>
     <main>
+        <div class="user-info" id="userInfo">
+            <!-- Benutzername und Anmeldezeit werden hier angezeigt -->
+        </div>
         <input type="text" id="messageInput" placeholder="Schreibe eine Nachricht..." maxlength="200">
         <button id="sendButton">Nachricht senden</button>
         <button id="clearButton">Alle Nachrichten löschen</button>
@@ -111,31 +121,38 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            loadMessages();
-            const username = localStorage.getItem('username');
-            if (!username) {
+            const username = localStorage.getItem('loggedInUser');
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            if (!username || !users[username]) {
                 alert('Sie müssen sich zuerst anmelden!');
                 window.location.href = 'login.html';
+                return;
             }
+
+            document.getElementById('userInfo').innerHTML = `
+                <span>Benutzer: ${username}</span>
+                <span>Angemeldet seit: ${users[username].lastLogin}</span>
+            `;
+
+            loadMessages();
+
+            document.getElementById('sendButton').addEventListener('click', function() {
+                sendMessage(username);
+            });
+
+            document.getElementById('clearButton').addEventListener('click', function() {
+                clearMessages();
+            });
+
+            document.getElementById('messageInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    sendMessage(username);
+                }
+            });
         });
 
-        document.getElementById('sendButton').addEventListener('click', function() {
-            sendMessage();
-        });
-
-        document.getElementById('clearButton').addEventListener('click', function() {
-            clearMessages();
-        });
-
-        document.getElementById('messageInput').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
-
-        function sendMessage() {
-            const username = localStorage.getItem('username');
+        function sendMessage(username) {
             const messageInput = document.getElementById('messageInput');
             const messageText = messageInput.value.trim();
 
