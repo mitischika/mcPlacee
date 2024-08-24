@@ -64,7 +64,8 @@
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('users')) || {};
+            let users = JSON.parse(localStorage.getItem('users')) || {};
+            
             if (users[username] && users[username].password !== password) {
                 alert('Falsches Passwort. Bitte versuchen Sie es erneut.');
                 return;
