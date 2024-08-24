@@ -12,6 +12,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            background-color: #f4f4f4;
         }
         header {
             background-color: #007BFF;
@@ -22,7 +23,6 @@
         main {
             flex: 1;
             padding: 15px;
-            background-color: #f4f4f4;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -42,10 +42,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            word-wrap: break-word;
         }
         .time {
             font-size: 0.8em;
             color: #555;
+            margin-left: 10px;
+            white-space: nowrap;
         }
         footer {
             background-color: #007BFF;
@@ -53,18 +56,25 @@
             padding: 10px;
             text-align: center;
         }
-        input[type="text"], button {
+        input[type="text"] {
             padding: 10px;
-            margin: 5px;
+            margin: 5px 0;
             width: calc(100% - 22px);
             max-width: 500px;
             font-size: 1em;
+            box-sizing: border-box;
         }
         button {
+            padding: 10px;
+            margin: 5px 0;
+            width: calc(100% - 22px);
+            max-width: 500px;
+            font-size: 1em;
             background-color: #28a745;
             color: white;
             border: none;
             cursor: pointer;
+            box-sizing: border-box;
         }
         button:hover {
             background-color: #218838;
@@ -76,8 +86,8 @@
         <h1>Willkommen zur Nachrichten Seite</h1>
     </header>
     <main>
-        <input type="text" id="messageInput" placeholder="Schreibe eine Nachricht...">
-        <button onclick="sendMessage()">Nachricht senden</button>
+        <input type="text" id="messageInput" placeholder="Schreibe eine Nachricht..." maxlength="200">
+        <button id="sendButton">Nachricht senden</button>
         <div class="message-board" id="messageBoard">
             <!-- Nachrichten werden hier angezeigt -->
         </div>
@@ -87,25 +97,37 @@
     </footer>
 
     <script>
-        function sendMessage() {
-            const messageBoard = document.getElementById('messageBoard');
+        document.getElementById('sendButton').addEventListener('click', function() {
             const messageInput = document.getElementById('messageInput');
             const messageText = messageInput.value.trim();
 
             if (messageText === '') {
+                alert('Bitte geben Sie eine Nachricht ein.');
                 return;
             }
 
             const now = new Date();
             const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
 
+            const messageBoard = document.getElementById('messageBoard');
+
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             messageDiv.innerHTML = `<span>${messageText}</span><span class="time">${timeString}</span>`;
 
             messageBoard.appendChild(messageDiv);
+
             messageInput.value = '';
-        }
+            messageBoard.scrollTop = messageBoard.scrollHeight;
+        });
+
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('sendButton').click();
+            }
+        });
     </script>
 </body>
 </html>
+
