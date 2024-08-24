@@ -133,13 +133,15 @@
         function sendMessage() {
             const nameInput = document.getElementById('nameInput');
             const messageInput = document.getElementById('messageInput');
-            const nameText = nameInput.value.trim();
+            let nameText = nameInput.value.trim();
             const messageText = messageInput.value.trim();
 
             if (nameText === '' || messageText === '') {
                 alert('Bitte geben Sie sowohl einen Namen als auch eine Nachricht ein.');
                 return;
             }
+
+            nameText = makeUniqueName(nameText);
 
             const now = new Date();
             const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -162,6 +164,19 @@
 
             messageInput.value = '';
             messageBoard.scrollTop = messageBoard.scrollHeight;
+        }
+
+        function makeUniqueName(name) {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            let uniqueName = name;
+            let counter = 1;
+
+            while (messages.some(message => message.name === uniqueName)) {
+                uniqueName = `${name}${counter}`;
+                counter++;
+            }
+
+            return uniqueName;
         }
 
         function saveMessage(name, text, time) {
