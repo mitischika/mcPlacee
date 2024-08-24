@@ -40,15 +40,21 @@
             margin-bottom: 10px;
             border-radius: 5px;
             display: flex;
+            flex-direction: column;
+            word-wrap: break-word;
+        }
+        .message-header {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            word-wrap: break-word;
+        }
+        .name {
+            font-weight: bold;
+            margin-right: 10px;
         }
         .time {
             font-size: 0.8em;
             color: #555;
-            margin-left: 10px;
-            white-space: nowrap;
         }
         footer {
             background-color: #007BFF;
@@ -79,6 +85,12 @@
         button:hover {
             background-color: #218838;
         }
+        #clearButton {
+            background-color: #dc3545;
+        }
+        #clearButton:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -86,8 +98,10 @@
         <h1>Willkommen zur Nachrichten Seite</h1>
     </header>
     <main>
+        <input type="text" id="nameInput" placeholder="Dein Name" maxlength="50">
         <input type="text" id="messageInput" placeholder="Schreibe eine Nachricht..." maxlength="200">
         <button id="sendButton">Nachricht senden</button>
+        <button id="clearButton">Alle Nachrichten löschen</button>
         <div class="message-board" id="messageBoard">
             <!-- Nachrichten werden hier angezeigt -->
         </div>
@@ -105,6 +119,10 @@
             sendMessage();
         });
 
+        document.getElementById('clearButton').addEventListener('click', function() {
+            clearMessages();
+        });
+
         document.getElementById('messageInput').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -113,11 +131,13 @@
         });
 
         function sendMessage() {
+            const nameInput = document.getElementById('nameInput');
             const messageInput = document.getElementById('messageInput');
+            const nameText = nameInput.value.trim();
             const messageText = messageInput.value.trim();
 
-            if (messageText === '') {
-                alert('Bitte geben Sie eine Nachricht ein.');
+            if (nameText === '' || messageText === '') {
+                alert('Bitte geben Sie sowohl einen Namen als auch eine Nachricht ein.');
                 return;
             }
 
@@ -128,19 +148,25 @@
 
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
-            messageDiv.innerHTML = `<span>${messageText}</span><span class="time">${timeString}</span>`;
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="name">${nameText}</span>
+                    <span class="time">${timeString}</span>
+                </div>
+                <div>${messageText}</div>
+            `;
 
             messageBoard.appendChild(messageDiv);
 
-            saveMessage(messageText, timeString);
+            saveMessage(nameText, messageText, timeString);
 
             messageInput.value = '';
             messageBoard.scrollTop = messageBoard.scrollHeight;
         }
 
-        function saveMessage(text, time) {
+        function saveMessage(name, text, time) {
             let messages = JSON.parse(localStorage.getItem('messages')) || [];
-            messages.push({ text: text, time: time });
+            messages.push({ name: name, text: text, time: time });
             localStorage.setItem('messages', JSON.stringify(messages));
         }
 
@@ -151,11 +177,23 @@
             messages.forEach(message => {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message';
-                messageDiv.innerHTML = `<span>${message.text}</span><span class="time">${message.time}</span>`;
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <span class="name">${message.name}</span>
+                        <span class="time">${message.time}</span>
+                    </div>
+                    <div>${message.text}</div>
+                `;
                 messageBoard.appendChild(messageDiv);
             });
 
             messageBoard.scrollTop = messageBoard.scrollHeight;
+        }
+
+        function clearMessages() {
+            localStorage.removeItem('messages');
+            const messageBoard = document.getElementById('messageBoard');
+            messageBoard.innerHTML = ''; // Löscht alle Nachrichten aus dem Nachrichtenbereich
         }
     </script>
 </body>
