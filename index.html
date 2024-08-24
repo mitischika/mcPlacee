@@ -97,7 +97,22 @@
     </footer>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMessages();
+        });
+
         document.getElementById('sendButton').addEventListener('click', function() {
+            sendMessage();
+        });
+
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
             const messageInput = document.getElementById('messageInput');
             const messageText = messageInput.value.trim();
 
@@ -117,17 +132,31 @@
 
             messageBoard.appendChild(messageDiv);
 
+            saveMessage(messageText, timeString);
+
             messageInput.value = '';
             messageBoard.scrollTop = messageBoard.scrollHeight;
-        });
+        }
 
-        document.getElementById('messageInput').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                document.getElementById('sendButton').click();
-            }
-        });
+        function saveMessage(text, time) {
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push({ text: text, time: time });
+            localStorage.setItem('messages', JSON.stringify(messages));
+        }
+
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const messageBoard = document.getElementById('messageBoard');
+
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+                messageDiv.innerHTML = `<span>${message.text}</span><span class="time">${message.time}</span>`;
+                messageBoard.appendChild(messageDiv);
+            });
+
+            messageBoard.scrollTop = messageBoard.scrollHeight;
+        }
     </script>
 </body>
 </html>
-
