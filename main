@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nachrichten Seite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        main {
+            flex: 1;
+            padding: 15px;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .message-board {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+        }
+        .message {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .time {
+            font-size: 0.8em;
+            color: #555;
+        }
+        footer {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        input[type="text"], button {
+            padding: 10px;
+            margin: 5px;
+            width: calc(100% - 22px);
+            max-width: 500px;
+            font-size: 1em;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Willkommen zur Nachrichten Seite</h1>
+    </header>
+    <main>
+        <input type="text" id="messageInput" placeholder="Schreibe eine Nachricht...">
+        <button onclick="sendMessage()">Nachricht senden</button>
+        <div class="message-board" id="messageBoard">
+            <!-- Nachrichten werden hier angezeigt -->
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Nachrichten Seite</p>
+    </footer>
+
+    <script>
+        function sendMessage() {
+            const messageBoard = document.getElementById('messageBoard');
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (messageText === '') {
+                return;
+            }
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `<span>${messageText}</span><span class="time">${timeString}</span>`;
+
+            messageBoard.appendChild(messageDiv);
+            messageInput.value = '';
+        }
+    </script>
+</body>
+</html>
